@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            "bts_aruco_detector = bts_aruco_detector.bts_aruco_detector:main",
         ],
     },
 )
