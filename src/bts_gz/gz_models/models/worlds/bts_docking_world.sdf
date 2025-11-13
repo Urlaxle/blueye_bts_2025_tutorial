@@ -98,5 +98,31 @@
   </include>
   </model>
 
+    <model name="ground">
+    <static>true</static>
+    <link name="ground_link">
+      <collision name="ground_collision">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>5 5</size>   <!-- make this large -->
+          </plane>
+        </geometry>
+      </collision>
+      <visual name="ground_visual">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>100 100</size>
+          </plane>
+        </geometry>
+        <material>
+          <ambient>0.4 0.4 0.4 1</ambient>
+          <diffuse>0.6 0.6 0.6 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+
   </world>
 </sdf>

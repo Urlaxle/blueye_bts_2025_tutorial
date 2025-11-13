@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             "bts_aruco_detector = bts_aruco_detector.bts_aruco_detector:main",
+            "bts_aruco_detector_simulator = bts_aruco_detector.bts_aruco_detector_simulator:main",
         ],
     },
 )
