@@ -160,3 +160,5 @@ source SOURCE_ENV
 source install/setup.bash
 ros2 run bts_keypoint_controller bts_keyboard_controller
 ```
+Press X in the docking controller to enable the docking! 
+
