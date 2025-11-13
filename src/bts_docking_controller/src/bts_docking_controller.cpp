@@ -33,12 +33,13 @@ bts_docking_controller::
     // Initialize PIDs
     pid_x_ = pid(0.3, 0.0, 0.1, 0.0, 0.2, -0.2);
     pid_y_ = pid(0.3, 0.0, 0.1, 0.0, 0.2, -0.2);
-    pid_z_ = pid(0.3, 0.0, 0.1, 0.0, 0.2, -0.2);
-    pid_yaw_ = pid(0.3, 0.0, 0.1, 0.0, 0.2, -0.2);
+    pid_z_ = pid(1.0, 0.0, 0.1, 0.0, 0.2, -0.2);
+    pid_yaw_ = pid(0.7, 0.0, 0.1, 0.0, 0.2, -0.2);
+    pid_yaw_.set_ssa(true);
 
     // Topics
     desired_state_topic_ = "blueye/desired_state";
-    current_state_topic_ = "blueye/aruco_estimation";
+    current_state_topic_ = "/blueye/pose_estimated_board_stamped";
     command_topic_ = "blueye/commands";
     enable_docking_service_name_ = "blueye/enable_docking";
 
@@ -180,12 +181,12 @@ void bts_docking_controller::command_callback() {
 
   // Set wrench values based on PID outputs
   command_msg.wrench.force.x = output_x; // Force in x direction
-  command_msg.wrench.force.y = output_y; // Force in y direction
-  command_msg.wrench.force.z = output_z; // Force in z direction
+  command_msg.wrench.force.y = -output_y; // Force in y direction
+  command_msg.wrench.force.z = -output_z - 0.4; // Force in z direction
   command_msg.wrench.torque.x = 0.0;     // No torque in
   command_msg.wrench.torque.y = 0.0;     // No torque in y direction
   command_msg.wrench.torque.z =
-      output_yaw; // Torque in z direction for yaw control
+      -output_yaw; // Torque in z direction for yaw control
 
   // Publish the command message
   command_pub_->publish(command_msg);

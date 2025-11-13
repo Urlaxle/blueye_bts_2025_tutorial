@@ -23,9 +23,17 @@ class BTSDockingGuidance(Node):
         self.waypoint_idx = 0
 
         # Subscriber
+        #self.create_subscription(
+        #    Odometry,
+        #    "/blueye/aruco_estimation", 
+        #    self.odometry_callback,
+        #    1
+        #)
+
+        # Subscriber
         self.create_subscription(
             Odometry,
-            "/blueye/aruco_estimation", 
+            "/blueye/pose_estimated_board_stamped",
             self.odometry_callback,
             1
         )
@@ -48,17 +56,14 @@ class BTSDockingGuidance(Node):
         """
         # Define waypoints to reach the docking station, [X, Y, Z, Yaw, sphere_of_acceptance]
         self.waypoints = np.array([
-            [3.0, 0.0, -0.3, math.pi, 0.3],
-            [2.75, 0.0, -0.3, math.pi, 0.3],
-            [2.5, 0.0, -0.3, math.pi, 0.3],
-            [2.25, 0.0, -0.3, math.pi, 0.3],
-            [2.0, 0.0, -0.3, math.pi, 0.3],
-            [1.75, 0.0, -0.3, math.pi, 0.3],
-            [1.5, 0.0, -0.3, math.pi, 0.3],
-            [1.25, 0.0, -0.3, math.pi, 0.3],
-            [1.0, 0.0, -0.3, math.pi, 0.2],
-            [0.7, 0.0, -0.1, math.pi, 0.2],
-            [0.4, 0.0, -0.05, math.pi, 0.1],
+            [2.25, -0.05, -0.3, math.pi, 0.4],
+            [2.0, -0.05, -0.3, math.pi, 0.4],
+            [1.75, -0.05, -0.2, math.pi, 0.4],
+            [1.5, -0.05, -0.2, math.pi, 0.4],
+            [1.25, -0.05, -0.2, math.pi, 0.3],
+            [1.0, -0.05, -0.2, math.pi, 0.2],
+            [0.7, -0.05, -0.1, math.pi, 0.2],
+            [0.4, -0.0, -0.05, math.pi, 0.1],
         ])
         """
         BTS Tutorial 2 - End of docking waypoints definition 
