@@ -79,7 +79,7 @@
 
 	<!-- Blueye Docking Station -->
     <model name="blueye_docking_station">
-        <pose> 2.0 0.0 0.0 1.57 0 3.1415 </pose>
+        <pose> 2.0 0.0 0.0 1.57 0 0.0 </pose>
 		<include>
 			<uri>  
         model://models/static_assets/bts_docking_station/model.sdf
@@ -89,7 +89,8 @@
 
   <!-- Blueye Model -->
   <model name="blueye">
-      <pose> 0.0 0.0 0.0 0 0 -3.1415 </pose>
+      <pose> 0.0 -0.25 0.0 0 0 0.0 </pose>
+      <!--pose> 0.0 0.0 0.0 0 0 -3.1415 </pose-->
   <include>
     <uri>  
               model://models/dynamic_assets/blueye/blueye.sdf  
