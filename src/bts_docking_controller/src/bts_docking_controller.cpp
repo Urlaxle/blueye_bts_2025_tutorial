@@ -181,8 +181,8 @@ void bts_docking_controller::command_callback() {
 
   // Set wrench values based on PID outputs
   command_msg.wrench.force.x = output_x; // Force in x direction
-  command_msg.wrench.force.y = -output_y; // Force in y direction
-  command_msg.wrench.force.z = -output_z - 0.4; // Force in z direction
+  command_msg.wrench.force.y = output_y; // Force in y direction
+  command_msg.wrench.force.z = -output_z; //#- 0.4; // Force in z direction
   command_msg.wrench.torque.x = 0.0;     // No torque in
   command_msg.wrench.torque.y = 0.0;     // No torque in y direction
   command_msg.wrench.torque.z =

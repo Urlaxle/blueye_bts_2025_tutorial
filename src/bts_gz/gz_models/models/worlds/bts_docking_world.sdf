@@ -98,14 +98,14 @@
   </include>
   </model>
 
-    <model name="ground">
+    <!--model name="ground">
     <static>true</static>
     <link name="ground_link">
       <collision name="ground_collision">
         <geometry>
           <plane>
             <normal>0 0 1</normal>
-            <size>5 5</size>   <!-- make this large -->
+            <size>5 5</size>
           </plane>
         </geometry>
       </collision>
@@ -122,7 +122,7 @@
         </material>
       </visual>
     </link>
-  </model>
+  </model-->
 
   </world>
 </sdf>

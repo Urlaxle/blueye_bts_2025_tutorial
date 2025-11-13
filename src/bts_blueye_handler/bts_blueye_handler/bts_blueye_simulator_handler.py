@@ -44,7 +44,7 @@ class BTSBlueyeSimulatorHandler(Node):
         surge_left.data = surge * 10.0 + yaw * 10.0
         surge_right.data = surge * 10.0 - yaw * 10.0
         sway_front.data = -sway * 10.0
-        heave_top.data = heave * 10.0
+        heave_top.data = -heave * 10.0
         self.surge_left_pub.publish(surge_left)
         self.surge_right_pub.publish(surge_right)
         self.sway_pub.publish(sway_front)

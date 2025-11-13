@@ -93,10 +93,10 @@ class PoseEstimationAruco(Node):
         return self.mod(angle + math.pi, 2 * math.pi) - math.pi 
     
     def current_waypoint_callback(self, msg:Pose):
-        self.current_waypoint[0] = msg.position.x
-        self.current_waypoint[1] = msg.position.y
-        self.current_waypoint[2] = msg.position.z
-        self.current_waypoint[3] = msg.orientation.w # deg
+        self.current_waypoint[0] = msg.pose.pose.position.x
+        self.current_waypoint[1] = msg.pose.pose.position.y
+        self.current_waypoint[2] = msg.pose.pose.position.z
+        self.current_waypoint[3] = msg.pose.pose.orientation.w # deg
             
             
     # Callback function that is executed when we receive an image from the gazebo topic blueye/front_camera   
@@ -114,7 +114,7 @@ class PoseEstimationAruco(Node):
         if not self.current_waypoint == [0,0,0,0]:
             # Print the gt pose of the camera wrt the tag frame on screen 
             # OBS: axis is flipped because want to give pose wrt. aruco frame which is drawn in image
-            str_position = "Current Waypoint   x=%4.3f  y=%4.3f  z=%4.3f  yaw=%4.3f" % (self.current_waypoint[1], self.current_waypoint[2], self.current_waypoint[0], self.current_waypoint[3])
+            str_position = "Current Waypoint   x=%4.3f  y=%4.3f  z=%4.3f  yaw=%4.3f" % (self.current_waypoint[0], self.current_waypoint[1], self.current_waypoint[2], self.current_waypoint[3])
             cv2.putText(output_image, str_position, (180, 150), self.font, 2, (0, 255, 255), 2, cv2.LINE_AA)
             
         cv2.imshow('Estimated Pose Image', output_image)
@@ -272,8 +272,8 @@ class PoseEstimationAruco(Node):
                 pose_stamped.header.stamp = self.get_clock().now().to_msg()
                 pose_stamped.header.frame_id = "tag"
 
-                if (float(pose_blueye_camera_wrt_tag_est[2]) < 0.0):
-                    pose_blueye_camera_wrt_tag_est[2] = -pose_blueye_camera_wrt_tag_est[2]
+                if (float(pose_blueye_camera_wrt_tag_est[2]) < 0.2):
+                    return
 
 
                 pose_stamped.pose.pose.position.x = float(pose_blueye_camera_wrt_tag_est[2])
