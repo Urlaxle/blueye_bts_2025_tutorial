@@ -1,0 +1,2 @@
+export GZ_VERSION=garden
+export GZ_SIM_RESOURCE_PATH=$(pwd)/src/gz/gz_models

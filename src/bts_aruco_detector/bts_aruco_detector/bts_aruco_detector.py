@@ -48,10 +48,10 @@ class BTSArucoDetector(Node):
         self.distortion_coeffs = np.array([-0.1779, 0.0220, 0.0035, -0.0023, 0.0811])
 
         # Rotation matrix
-        rot_matrix_180_x  = np.zeros((3,3), dtype=np.float32)
-        rot_matrix_180_x[0,0] = 1.0
-        rot_matrix_180_x[1,1] =-1.0
-        rot_matrix_180_x[2,2] =-1.0
+        self.rot_matrix_180_x  = np.zeros((3,3), dtype=np.float32)
+        self.rot_matrix_180_x[0,0] = 1.0
+        self.rot_matrix_180_x[1,1] =-1.0
+        self.rot_matrix_180_x[2,2] =-1.0
 
         # Define the ArUco dictionary and board
         cv2.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
@@ -78,8 +78,9 @@ class BTSArucoDetector(Node):
                 parameters=parameters
         )
 
-        if False and len(corners) > 0:
+        if True and len(corners) > 0:
             cv2.aruco.drawDetectedMarkers(image, corners) 
+            #cv2.imshow("Detected markers", image)
         
         '''
         End of BTS Tutorial 1 
@@ -143,6 +144,9 @@ class BTSArucoDetector(Node):
 
                 output_image = self.aruco_detection(frame)
 
+                h,w = output_image.shape[:2]
+                print("Width: {}, Height: {}".format(w,h))
+
                 if (output_image is None):
                     self.get_logger().warning("No output image from aruco detection")
                     continue
@@ -152,15 +156,14 @@ class BTSArucoDetector(Node):
                 cv2.putText(output_image, str_position, (260, 75), self.font, 2, (255, 0, 255), 2, cv2.LINE_AA)
 
                 # Display Dock Mode On Screen when its run
-                if self.dock_mode:
+                if self.docking_mode:
                     h, w = frame.shape[:2]
                     w_dock = int (w / 2) + 100
                     h_dock = h - int (h / 4) 
                     cv2.putText(output_image, "Dock Mode", (w_dock, h_dock), self.font, 4, (0, 0, 255), 2, cv2.LINE_AA)
 
-                if not self.current_waypoint == [0,0,0,0]:
-                    str_position = "Current Waypoint  x=%4.3f  y=%4.3f  z=%4.3f  yaw=%4.3f" % (self.current_waypoint_x, self.current_waypoint_y, self.current_waypoint_z, self.current_waypoint_psi)
-                    cv2.putText(output_image, str_position, (260, 150), self.font, 2, (0, 255, 255), 2, cv2.LINE_AA)
+                str_position = "Current Waypoint  x=%4.3f  y=%4.3f  z=%4.3f  yaw=%4.3f" % (self.current_waypoint_x, self.current_waypoint_y, self.current_waypoint_z, self.current_waypoint_psi)
+                cv2.putText(output_image, str_position, (260, 150), self.font, 2, (0, 255, 255), 2, cv2.LINE_AA)
                     
                 #------- Show Image on Screen ------# 
                 cv2.imshow('Estimated Pose Image', output_image)
@@ -199,7 +202,7 @@ class BTSArucoDetector(Node):
         return response
 
     def rotation_to_euler_angles(self, R):
-        assert (self.isRotationMatrix(R))
+        #assert (self.isRotationMatrix(R))
 
         sy = math.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
 
@@ -241,7 +244,7 @@ class BTSArucoDetector(Node):
             pose_stamped.pose.pose.orientation.w = quat.w
 
             # Publish message
-            self.pose_estimated_board_stamped_pub_.publish(pose_stamped)
+            self.aruco_estimation.publish(pose_stamped)
 
 def main():
     rclpy.init()
