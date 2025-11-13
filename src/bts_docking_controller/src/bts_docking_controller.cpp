@@ -38,7 +38,7 @@ bts_docking_controller::
 
     // Topics
     desired_state_topic_ = "blueye/desired_state";
-    current_state_topic_ = "blueye/aruco_detection";
+    current_state_topic_ = "blueye/aruco_estimation";
     command_topic_ = "blueye/commands";
     enable_docking_service_name_ = "blueye/enable_docking";
 

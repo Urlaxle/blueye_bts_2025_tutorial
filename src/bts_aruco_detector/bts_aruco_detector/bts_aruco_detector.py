@@ -22,14 +22,14 @@ class BTSArucoDetector(Node):
         self.aruco_estimation = self.create_publisher(Odometry, "/blueye/aruco_estimation", 1)
 
         # Declare subscriber to get the current waypoint
-        self.current_waypoint_subscriber = self.create_subscription(Odometry, "/blueye/guidance/desired_state", self.current_waypoint_callback, 1)
+        self.current_waypoint_subscriber = self.create_subscription(Odometry, "/blueye/desired_state", self.current_waypoint_callback, 1)
         self.current_waypoint_x = 0.0
         self.current_waypoint_y = 0.0
         self.current_waypoint_z = 0.0
         self.current_waypoint_psi = 0.0
 
         # Declare control mode services
-        self.docking_mode = False
+        self.docking_mode = True
         self.dock_mode_service = self.create_service(SetBool, "/blueye/dock_mode/viz", self.dock_mode_callback) 
 
         # Variables to hold position

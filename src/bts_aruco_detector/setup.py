@@ -15,8 +15,8 @@ setup(
     zip_safe=True,
     maintainer='urlaxle',
     maintainer_email='waldum94@gmail.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    description='Package that detectes aruco markers on a predefined configuration and publishes the relative pose of the camera to this rig.',
+    license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

@@ -26,7 +26,6 @@ ament_target_dependencies(bts_docking_controller
   Eigen3
 )
 
-
 # Install the executable
 install(TARGETS
   bts_docking_controller 
