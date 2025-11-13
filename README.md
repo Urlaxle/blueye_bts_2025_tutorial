@@ -60,6 +60,12 @@ sudo apt update
 sudo apt install ros-humble-ros-gzgarden
 ```
 
+### 1.5 Install pyquaternion
+
+```bash
+pip install pyquaternion
+```
+
 ## 2. Clone and Build blueye_bts_2025_tutorial
 
 ### 2.1 Clone the repository
