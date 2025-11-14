@@ -85,6 +85,112 @@ class PoseEstimationAruco(Node):
         self.yaw_tag_camera_gt = 0.0
         
     
+    def pose_estimation(self, frame, aruco_dict_type, matrix_coefficients, distortion_coefficients):
+        # Convert image to grayscale
+
+        # Define ArUco dictionary and detector parameters
+        
+
+        # Perform marker detection
+
+        # Perform marker detection
+        # corners, ids, rejected_img_points = 
+
+        # Draw markers on OpenCV Window and Display them to screen
+
+
+        ready = False 
+        if not ready:
+            return 
+
+        # Define ArUco board
+        aruco_board = cv2.aruco.Board(pos_board, cv2.aruco_dict, id_board)
+
+        # Initialize a pose estimate array
+        pose_blueye_camera_wrt_tag_est = np.zeros(4)
+
+        # Check that we actually are detecting any tags
+        if len(corners) > 0:
+            
+            self.tot_detections += len(ids)
+
+            # Defines initial guesses
+            rvec_initial_guess = np.zeros((3, 1), dtype=float)
+            tvec_initial_guess = np.zeros((3, 1), dtype=float)
+            
+            # Estimate pose of the ArUco board
+            _, rvec_board, tvec_board = cv2.aruco.estimatePoseBoard(
+                corners, ids, aruco_board, matrix_coefficients, distortion_coefficients,
+                rvec_initial_guess, tvec_initial_guess
+            )
+            
+
+            # Obtain the rotation matrix tag->camera
+            R_camera_tag = np.matrix(cv2.Rodrigues(rvec_board)[0])
+            R_tag_camera = R_camera_tag.T  # Transpose to get tag->camera rotation
+            # Compute translation
+            
+            R_tag_camera = R_tag_camera
+            t_tag_camera = (-R_tag_camera @ np.array(tvec_board).reshape(-1,1)).flatten()
+
+
+            # Get the attitude of camera frame wrt flipped tag frame(or vice verca?????), in terms of euler 321 (Needs to be flipped first)    
+            _, pitch_camera_board, _ = self.rotationMatrixToEulerAngles(self.rot_matrix_180_x*R_tag_camera)
+
+            # Adjust yaw relative to world frame
+            yaw_blueye_wrt_tag = -pitch_camera_board
+    
+            pose_blueye_camera_wrt_tag_est = np.array([t_tag_camera[0,0], t_tag_camera[0,1], t_tag_camera[0,2], yaw_blueye_wrt_tag], dtype=float)
+
+            
+            cv2.aruco.drawDetectedMarkers(frame, corners)
+            frame = self.aruco_display(corners, ids, rejected_img_points, frame, rvec_board, tvec_board)
+
+            # ------------------------------------------------------------------------------------------
+            #               Publish the estimated pose of the camera wrt the tag frame
+            # ------------------------------------------------------------------------------------------
+            if not np.all(pose_blueye_camera_wrt_tag_est == 0):
+
+                # Publish estimated pose with covariance for robot localization
+                pose_stamped = Odometry()
+                pose_stamped.header.stamp = self.get_clock().now().to_msg()
+                pose_stamped.header.frame_id = "tag"
+
+                if (float(pose_blueye_camera_wrt_tag_est[2]) < 0.2):
+                    return
+
+
+                pose_stamped.pose.pose.position.x = float(pose_blueye_camera_wrt_tag_est[2])
+                pose_stamped.pose.pose.position.y = float(pose_blueye_camera_wrt_tag_est[0])
+                pose_stamped.pose.pose.position.z = float(pose_blueye_camera_wrt_tag_est[1])
+
+                # Convert yaw to quaternion
+                quat = pyquaternion.Quaternion(axis=[0, 0, 1], radians=(pose_blueye_camera_wrt_tag_est[3] - np.pi)).normalised
+                pose_stamped.pose.pose.orientation.x = quat.x
+                pose_stamped.pose.pose.orientation.y = quat.y
+                pose_stamped.pose.pose.orientation.z = quat.z
+                pose_stamped.pose.pose.orientation.w = quat.w
+
+                # Add covariance matrix
+                std_dev_pos = 0.0001  # Standard deviation for position (meters)
+                std_dev_yaw = 0.001225  # Standard deviation for yaw (radians)
+                pose_stamped.pose.covariance = [
+                    std_dev_pos**2, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    0.0, std_dev_pos**2, 0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, std_dev_pos**2, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0, 0.0, std_dev_yaw**2
+                ]
+
+                self.aruco_detection_pub.publish(pose_stamped)
+                self.current_x = pose_blueye_camera_wrt_tag_est[0]
+                self.current_y = pose_blueye_camera_wrt_tag_est[1]
+                self.current_z = pose_blueye_camera_wrt_tag_est[2]
+                self.current_psi = pose_blueye_camera_wrt_tag_est[3]
+                
+
+        return frame
     def mod(self, x, y):
         return x - math.floor(x/y) * y
     
@@ -191,122 +297,6 @@ class PoseEstimationAruco(Node):
         return image
 
     
-    def pose_estimation(self, frame, aruco_dict_type, matrix_coefficients, distortion_coefficients):
-        # Convert image to grayscale
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        # Define ArUco dictionary and detector parameters
-        cv2.aruco_dict = cv2.aruco.getPredefinedDictionary(aruco_dict_type)
-        parameters = cv2.aruco.DetectorParameters()
-        
-        # Define ArUco board
-        aruco_board = cv2.aruco.Board(pos_board, cv2.aruco_dict, id_board)
-
-        # Perform marker detection
-        start_time = time.perf_counter()
-        # Perform marker detection
-        corners, ids, rejected_img_points = cv2.aruco.detectMarkers(
-                gray, 
-                cv2.aruco_dict, 
-                parameters=parameters
-        )
-
-        end_time = time.perf_counter()
-
-        # Store detection time statistics
-        self.detection_time.append(end_time - start_time)
-        self.avg_detection_time = sum(self.detection_time) / len(self.detection_time)
-
-        # Initialize a pose estimate array
-        pose_blueye_camera_wrt_tag_est = np.zeros(4)
-
-        # Check that we actually are detecting any tags
-        if len(corners) > 0:
-            
-            self.tot_detections += len(ids)
-
-            # Defines initial guesses
-            rvec_initial_guess = np.zeros((3, 1), dtype=float)
-            tvec_initial_guess = np.zeros((3, 1), dtype=float)
-            
-            # Estimate pose of the ArUco board
-            _, rvec_board, tvec_board = cv2.aruco.estimatePoseBoard(
-                corners, ids, aruco_board, matrix_coefficients, distortion_coefficients,
-                rvec_initial_guess, tvec_initial_guess
-            )
-            
-
-            # Obtain the rotation matrix tag->camera
-            R_camera_tag = np.matrix(cv2.Rodrigues(rvec_board)[0])
-            R_tag_camera = R_camera_tag.T  # Transpose to get tag->camera rotation
-            # Compute translation
-            
-            R_tag_camera = R_tag_camera
-            t_tag_camera = (-R_tag_camera @ np.array(tvec_board).reshape(-1,1)).flatten()
-
-
-            # Get the attitude of camera frame wrt flipped tag frame(or vice verca?????), in terms of euler 321 (Needs to be flipped first)    
-            _, pitch_camera_board, _ = self.rotationMatrixToEulerAngles(self.rot_matrix_180_x*R_tag_camera)
-
-            # Adjust yaw relative to world frame
-            yaw_blueye_wrt_tag = -pitch_camera_board
-    
-            pose_blueye_camera_wrt_tag_est = np.array([t_tag_camera[0,0], t_tag_camera[0,1], t_tag_camera[0,2], yaw_blueye_wrt_tag], dtype=float)
-
-            # ------------------------------------------------------------------------------------------
-            #                Visualize the detected tags and their coordinate frame
-            # ------------------------------------------------------------------------------------------
-            
-            cv2.aruco.drawDetectedMarkers(frame, corners)
-
-            # Adding Id-label
-            frame = self.aruco_display(corners, ids, rejected_img_points, frame, rvec_board, tvec_board)
-
-            # ------------------------------------------------------------------------------------------
-            #               Publish the estimated pose of the camera wrt the tag frame
-            # ------------------------------------------------------------------------------------------
-            if not np.all(pose_blueye_camera_wrt_tag_est == 0):
-
-                # Publish estimated pose with covariance for robot localization
-                pose_stamped = Odometry()
-                pose_stamped.header.stamp = self.get_clock().now().to_msg()
-                pose_stamped.header.frame_id = "tag"
-
-                if (float(pose_blueye_camera_wrt_tag_est[2]) < 0.2):
-                    return
-
-
-                pose_stamped.pose.pose.position.x = float(pose_blueye_camera_wrt_tag_est[2])
-                pose_stamped.pose.pose.position.y = float(pose_blueye_camera_wrt_tag_est[0])
-                pose_stamped.pose.pose.position.z = float(pose_blueye_camera_wrt_tag_est[1])
-
-                # Convert yaw to quaternion
-                quat = pyquaternion.Quaternion(axis=[0, 0, 1], radians=(pose_blueye_camera_wrt_tag_est[3] - np.pi)).normalised
-                pose_stamped.pose.pose.orientation.x = quat.x
-                pose_stamped.pose.pose.orientation.y = quat.y
-                pose_stamped.pose.pose.orientation.z = quat.z
-                pose_stamped.pose.pose.orientation.w = quat.w
-
-                # Add covariance matrix
-                std_dev_pos = 0.0001  # Standard deviation for position (meters)
-                std_dev_yaw = 0.001225  # Standard deviation for yaw (radians)
-                pose_stamped.pose.covariance = [
-                    std_dev_pos**2, 0.0, 0.0, 0.0, 0.0, 0.0,
-                    0.0, std_dev_pos**2, 0.0, 0.0, 0.0, 0.0,
-                    0.0, 0.0, std_dev_pos**2, 0.0, 0.0, 0.0,
-                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                    0.0, 0.0, 0.0, 0.0, 0.0, std_dev_yaw**2
-                ]
-
-                self.aruco_detection_pub.publish(pose_stamped)
-                self.current_x = pose_blueye_camera_wrt_tag_est[0]
-                self.current_y = pose_blueye_camera_wrt_tag_est[1]
-                self.current_z = pose_blueye_camera_wrt_tag_est[2]
-                self.current_psi = pose_blueye_camera_wrt_tag_est[3]
-                
-
-        return frame
     
 def main():
     rclpy.init()
