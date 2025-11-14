@@ -88,11 +88,11 @@ sudo apt install python3-colcon-common-extensions
 
 You need a specific version of numpy and opencv. Make sure you have uninstall both opencv and numpy first. 
 
-``bash
+```bash
 pip install "numpy<2"
 ```
 
-``bash
+```bash
 pip install opencv-contrib-python==4.9.0.80
 ```
 
