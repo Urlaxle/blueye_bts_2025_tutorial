@@ -7,23 +7,30 @@
   <visual name="plane_visual">
     <geometry>
       <box>
-        <size>10 10 0.001</size>
+        <size>5 10.0 0.001</size>
       </box>
     </geometry>
+
+    <material>
+    <ambient>0.8 0.8 0.8 1</ambient>
+    <diffuse>0.8 0.8 0.8 1</diffuse>
+    <specular>0.0 0.0 0.0 1</specular>
+    <pbr>
+      <metal>
+        <albedo_map>bts.jpg</albedo_map>
+        <normal_map>bts.jpg</normal_map>  <!-- can be the same, just to satisfy PBR -->
+        <!-- optional but helpful -->
+        <roughness>0.3</roughness>
+        <metalness>0.0</metalness>
+      </metal>
+    </pbr>
+    </material>
 
       <!--material>
     <ambient>1 0 0 1</ambient>
     <diffuse>1 0 0 1</diffuse>
     <specular>0 0 0 1</specular>
   </material-->
-
-      <material>
-      <pbr>
-        <metal>
-          <albedo_map>bts.jpg</albedo_map>
-        </metal>
-      </pbr>
-    </material>
 
   </visual>
   </link>
