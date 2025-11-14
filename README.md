@@ -56,6 +56,14 @@ sudo apt install ros-humble-desktop
 ### 1.4 Install Gazebo Garden ROS 2 integration
 
 ```bash
+sudo apt install ros-humble-ros-gz
+
+sudo wget https://packages.osrfoundation.org/gazebo.gpg \
+     -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] \
+     http://packages.osrfoundation.org/gazebo/ubuntu-stable \
+     $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list
+
 sudo apt update
 sudo apt install ros-humble-ros-gzgarden
 ```
