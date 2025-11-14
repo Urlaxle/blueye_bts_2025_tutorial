@@ -1,0 +1,31 @@
+
+<?xml version="1.0" ?>
+<sdf version="1.5">
+<model name="textured_plane">
+  <static>true</static>
+  <link name="link">
+  <visual name="plane_visual">
+    <geometry>
+      <box>
+        <size>10 10 0.001</size>
+      </box>
+    </geometry>
+
+      <!--material>
+    <ambient>1 0 0 1</ambient>
+    <diffuse>1 0 0 1</diffuse>
+    <specular>0 0 0 1</specular>
+  </material-->
+
+      <material>
+      <pbr>
+        <metal>
+          <albedo_map>bts.jpg</albedo_map>
+        </metal>
+      </pbr>
+    </material>
+
+  </visual>
+  </link>
+</model>
+</sdf>

@@ -1,0 +1,14 @@
+material TexturedPlane
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture bts.jpg
+      }
+    }
+  }
+}
+

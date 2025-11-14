@@ -1,8 +1,8 @@
 #ifndef BTS_PID_HPP
 #define BTS_PID_HPP
 
-#include "rov_qol/angles.hpp"
 #include <iostream>
+#include <cmath>
 
 class pid {
 

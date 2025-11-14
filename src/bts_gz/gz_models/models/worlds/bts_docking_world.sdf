@@ -17,7 +17,7 @@
 
 <!-- Simple assembly of the Marine Cybernetics Laboratory (MC-lab) at Tyholt, Trondheim -->
 <sdf version="1.9">
-	<world name="pipeline_world">
+	<world name="bts_world">
   <!--  Parameters for the physics, updates every 1ms and realtime/simtime = 1.0 --> 
   <physics name="1ms" type="ignored">
     <max_step_size>0.001</max_step_size>
@@ -78,7 +78,7 @@
 	</light>
 
 	<!-- Blueye Docking Station -->
-    <model name="blueye_docking_station">
+    <model name="bts_docking_station">
         <pose> 2.0 0.0 0.0 1.57 0 0.0 </pose>
 		<include>
 			<uri>  
@@ -97,6 +97,15 @@
     </uri>
   </include>
   </model>
+
+  <!-- BTS Logo Plane -->
+  <model name="bts_plane">
+  <include>
+      <uri>model://models/static_assets/bts_logo_plane/model.sdf</uri>
+      <pose>0 0 0 0 0 0</pose>  <!-- x y z roll pitch yaw -->
+  </include>
+  </model>
+
 
     <!--model name="ground">
     <static>true</static>
