@@ -1,5 +1,7 @@
 # Blueye BTS 2025 Tutorial – Setup and Run Guide
 
+![](.readme_imgs/gazebo_sim.png)
+
 This README walks you through:
 
 - Installing **ROS 2 Humble** and **Gazebo Garden ROS interface**
