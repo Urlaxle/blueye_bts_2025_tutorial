@@ -86,7 +86,7 @@ sudo apt install ros-humble-ament-cmake
 sudo apt install python3-colcon-common-extensions
 ```
 
-You need a specific version of numpy and opencv. Make sure you have uninstall both opencv and numpy first. 
+You need a specific version of numpy and opencv. Make sure you have uninstalled both opencv and numpy first. 
 
 ```bash
 pip install "numpy<2"
