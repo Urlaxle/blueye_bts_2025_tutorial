@@ -70,6 +70,14 @@ pip install pyquaternion
 pip install pynput
 ```
 
+```bash
+sudo apt install ros-humble-ament-cmake
+```
+
+```bash
+sudo apt install python3-colcon-common-extensions
+```
+
 ## 2. Clone and Build blueye_bts_2025_tutorial
 
 ### 2.1 Clone the repository
