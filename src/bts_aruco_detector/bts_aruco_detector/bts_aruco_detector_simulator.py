@@ -86,14 +86,17 @@ class PoseEstimationAruco(Node):
         
     
     def pose_estimation(self, frame, aruco_dict_type, matrix_coefficients, distortion_coefficients):
+
+        """
+        BTS Tutorial - Detect ArUco Markers and draw them on screen 
+        """
         # Convert image to grayscale
 
         # Define ArUco dictionary and detector parameters
-        
 
         # Perform marker detection
 
-        # Perform marker detection
+        # Perform marker detection, expected to find 25, 26, 27, 28, 29. For full code to work variable names should be as defined below
         # corners, ids, rejected_img_points = 
 
         # Draw markers on OpenCV Window and Display them to screen
